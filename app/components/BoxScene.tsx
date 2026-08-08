@@ -3,8 +3,6 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
-
 export default function BoxScene() {
   const containerRef = useRef<HTMLDivElement>(null)
   const lidRef = useRef<HTMLDivElement>(null)
@@ -13,6 +11,8 @@ export default function BoxScene() {
   const captionRef = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+    
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -21,6 +21,7 @@ export default function BoxScene() {
           end: '+=3000',
           scrub: 1.5,
           pin: true,
+          anticipatePin: 1,
           onUpdate: (self) => {
             const p = self.progress
             const captions = [
@@ -38,7 +39,9 @@ export default function BoxScene() {
           }
         }
       })
+
       tl.to(lidRef.current, { rotateX: -110, y: -80, opacity: 0, duration: 2, ease: 'power2.inOut' }, 0)
+
       const cookies = cookiesRef.current?.querySelectorAll('.cookie')
       cookies?.forEach((cookie, i) => {
         const angle = (i / 8) * Math.PI * 2
@@ -46,9 +49,12 @@ export default function BoxScene() {
         tl.to(cookie, { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist - 120, rotation: 360 + i * 30, opacity: 1, scale: 1, duration: 2.5, ease: 'power3.out' }, 0.8)
         tl.to(cookie, { x: (i - 4) * 55, y: 80, rotation: (i - 4) * 8, scale: 0.45, duration: 2, ease: 'power2.inOut' }, 3.5)
       })
+
       tl.to('.bb-box', { opacity: 0, scale: 0.8, duration: 1.5, ease: 'power2.in' }, 2.8)
       tl.to(baithakRef.current, { opacity: 1, y: 0, duration: 2.5, ease: 'power2.out' }, 3.2)
+
     }, containerRef)
+
     return () => ctx.revert()
   }, [])
 
@@ -79,6 +85,7 @@ export default function BoxScene() {
           </div>
         </div>
       </div>
+
       <div className="bb-box relative" style={{perspective: '800px'}}>
         <div ref={lidRef} className="absolute -top-6 left-0 right-0 h-8 bg-[#2a1508] border border-[#d4af6a]/20 flex items-center justify-center" style={{transformOrigin: 'bottom center'}}>
           <span className="text-[#d4af6a] text-xs tracking-[0.3em] opacity-60">— The Assorted —</span>
@@ -90,6 +97,7 @@ export default function BoxScene() {
           <span className="text-[#d4af6a] text-xs opacity-50 tracking-wider">Assorted Cookies</span>
         </div>
       </div>
+
       <div ref={cookiesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center">
         {cookieColors.map((color, i) => (
           <div key={i} className="cookie absolute opacity-0 scale-0" style={{left:'50%',top:'50%',marginLeft:'-24px',marginTop:'-24px'}}>
@@ -97,6 +105,7 @@ export default function BoxScene() {
           </div>
         ))}
       </div>
+
       <p ref={captionRef} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-[#d4af6a] font-serif italic text-lg text-center">A box arrives.</p>
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40">
         <span className="text-[#f5e6d3] text-xs tracking-[0.3em]">SCROLL</span>
