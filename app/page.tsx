@@ -12,6 +12,7 @@ export default async function Home() {
     <>
       <Navbar />
       <BoxScene />
+      <div style={{height: '3000px', marginTop: '-3000px', pointerEvents: 'none'}} />
       <main className="bg-[#1a0f0a] relative z-10">
         <div id="products" className="max-w-5xl mx-auto px-6 py-24">
           <p className="text-[#d4af6a] tracking-[0.4em] text-xs mb-3 text-center">OUR PRODUCTS</p>
@@ -30,7 +31,7 @@ export default async function Home() {
                 <h3 className="text-[#f5e6d3] font-serif text-xl mb-2">{p.name}</h3>
                 <p className="text-[#f5e6d3] opacity-50 text-xs mb-5 leading-relaxed">{p.description}</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-[#d4af6a] font-light text-lg">Rs.{p.price}</p>
+                  <p className="text-[#d4af6a] font-light text-lg">{'\u20B9'}{p.price}</p>
                   <button className="text-xs tracking-[0.2em] border border-[#d4af6a]/40 text-[#d4af6a] px-4 py-2 hover:bg-[#d4af6a] hover:text-[#1a0f0a] transition-all duration-300">ADD TO CART</button>
                 </div>
               </div>
