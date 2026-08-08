@@ -12,8 +12,30 @@ export default async function Home() {
     <>
       <Navbar />
       <BoxScene />
+      <div style={{height: '3000px', marginTop: '-3000px', pointerEvents: 'none'}} />
 
-      <main className="bg-[#1a0f0a]">
+      <main className="bg-[#1a0f0a] relative z-10">
+        <div id="products" className="max-w-5xl mx-auto px-6 py-24">
+          <p className="text-[#d4af6a] tracking-[0.4em] text-xs mb-3 text-center">— OUR PRODUCTS —</p>
+          <h2 className="text-[#f5e6d3] font-serif text-3xl font-light text-center mb-16">The Baithak
+cat > app/page.tsx << 'ENDOFFILE'
+import { supabase } from './lib/supabase'
+import Navbar from './components/Navbar'
+import BoxScene from './components/BoxScene'
+
+export default async function Home() {
+  const { data: products } = await supabase
+    .from('products')
+    .select('*')
+    .eq('in_stock', true)
+
+  return (
+    <>
+      <Navbar />
+      <BoxScene />
+      <div style={{height: '3000px', marginTop: '-3000px', pointerEvents: 'none'}} />
+
+      <main className="bg-[#1a0f0a] relative z-10">
         <div id="products" className="max-w-5xl mx-auto px-6 py-24">
           <p className="text-[#d4af6a] tracking-[0.4em] text-xs mb-3 text-center">— OUR PRODUCTS —</p>
           <h2 className="text-[#f5e6d3] font-serif text-3xl font-light text-center mb-16">The Baithak Collection</h2>
@@ -32,15 +54,12 @@ export default async function Home() {
                 <p className="text-[#f5e6d3] opacity-50 text-xs mb-5 leading-relaxed">{p.description}</p>
                 <div className="flex items-center justify-between">
                   <p className="text-[#d4af6a] font-light text-lg">₹{p.price}</p>
-                  <button className="text-xs tracking-[0.2em] border border-[#d4af6a]/40 text-[#d4af6a] px-4 py-2 hover:bg-[#d4af6a] hover:text-[#1a0f0a] transition-all duration-300">
-                    ADD TO CART
-                  </button>
+                  <button className="text-xs tracking-[0.2em] border border-[#d4af6a]/40 text-[#d4af6a] px-4 py-2 hover:bg-[#d4af6a] hover:text-[#1a0f0a] transition-all duration-300">ADD TO CART</button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
         <div className="border-t border-[#d4af6a]/10 py-8 text-center">
           <p className="text-[#d4af6a] font-serif italic text-sm opacity-60">Every bite deserves a baithak.</p>
         </div>
