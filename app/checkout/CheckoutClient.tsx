@@ -232,10 +232,10 @@ export default function CheckoutClient() {
                 </div>
               )}
               <div className="flex justify-between text-sm text-ink-soft">
-                <span>Shipping</span><span>{subtotal >= 999 ? 'Free' : '₹60'}</span>
+                <span>Shipping</span><span>{subtotal >= 1299 ? 'Free' : '₹60'}</span>
               </div>
               <div className="flex justify-between text-lg font-medium text-ink pt-2 border-t border-parchment">
-                <span>Total</span><span>₹{total + (subtotal >= 999 ? 0 : 60)}</span>
+                <span>Total</span><span>₹{total + (subtotal >= 1299 ? 0 : 60)}</span>
               </div>
             </div>
 
@@ -244,7 +244,7 @@ export default function CheckoutClient() {
               disabled={loading}
               className="mt-6 w-full rounded-full bg-claret py-4 text-milk font-medium hover:bg-claret-dark transition-colors disabled:opacity-50"
             >
-              {loading ? 'Processing...' : `Pay ₹${total + (subtotal >= 999 ? 0 : 60)}`}
+              {loading ? 'Processing...' : `Pay ₹${total + (subtotal >= 1299 ? 0 : 60)}`}
             </button>
 
             <div className="mt-4 flex items-center justify-center gap-4 text-xs text-ink-soft">
