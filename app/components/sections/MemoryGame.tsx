@@ -582,7 +582,7 @@ export default function MemoryGame() {
                                 transition={{ duration: 0.5, ease: 'easeOut' }}
                               >
                                 {/* Back — claret gradient, cream wordmark. */}
-                                <span className="bb-card-face rounded-2xl bg-gradient-to-br from-claret to-claret-dark">
+                                <span className="bb-card-face bb-card-face-back rounded-2xl bg-gradient-to-br from-claret to-claret-dark">
                                   <span
                                     aria-hidden
                                     className="absolute inset-1.5 rounded-xl border border-milk/20"

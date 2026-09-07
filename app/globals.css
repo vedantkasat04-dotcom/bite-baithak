@@ -141,6 +141,7 @@ video::-webkit-media-controls-start-playback-button {
    together makes that dependency obvious. */
 .bb-card-scene {
   isolation: isolate;
+  overflow: hidden;
   perspective: 1000px;
 }
 
@@ -167,6 +168,10 @@ video::-webkit-media-controls-start-playback-button {
 }
 
 /* The front is pre-rotated so it faces the viewer once the parent flips. */
+.bb-card-face-back {
+  background: #8B1E2C;
+}
+
 .bb-card-face-front {
   transform: rotateY(180deg);
 }
