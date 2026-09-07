@@ -2,7 +2,7 @@ import { getProducts, getBestsellers } from './lib/supabase'
 import Hero from './components/Hero'
 import Bestsellers from './components/home/Bestsellers'
 import dynamic from 'next/dynamic'
-const MemoryGame = dynamic(() => import('./components/sections/MemoryGame'), { ssr: false })
+const MemoryGame = dynamic(() => import('./components/sections/MemoryGame'))
 const StoryTeaser = dynamic(() => import('./components/home/StoryTeaser'))
 const GiftingTeaser = dynamic(() => import('./components/home/GiftingTeaser'))
 const ProductGridPreview = dynamic(() => import('./components/home/ProductGridPreview'))
