@@ -716,7 +716,7 @@ export default function MemoryGame() {
                         </div>
                       )}
                       {moves > 8 && (
-                        <p className="mt-3 text-xs text-ink-soft">Next time — solve in 9 moves to unlock a discount.</p>
+                        <p className="mt-3 text-xs text-ink-soft">Next time — solve in 8 moves or fewer to unlock a discount.</p>
                       )}
                       <motion.button
                         type="button"
