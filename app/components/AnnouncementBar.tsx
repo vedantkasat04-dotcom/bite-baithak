@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 const MESSAGES = [
-  'Free shipping across India on orders above ₹999',
+  'Free shipping across India on orders above ₹1299',
   'Baked in small batches — never mass produced',
   'Pure desi ghee. Never palm oil.',
   'Corporate and festive gifting — bulk orders open',
