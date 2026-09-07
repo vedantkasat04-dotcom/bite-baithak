@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     // Send confirmation email
     await resend.emails.send({
-      from: 'Bite Baithak <orders@bitebaithak.com>',
+      from: 'Bite Baithak <onboarding@resend.dev>',
       to: orderData.email,
       subject: `Order confirmed — ${razorpay_order_id}`,
       html: `
