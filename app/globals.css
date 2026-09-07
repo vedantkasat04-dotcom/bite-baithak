@@ -208,41 +208,8 @@ video::-webkit-media-controls-start-playback-button {
 }
 
 /* Safari-proof card flip — opacity crossfade instead of 3D rotation */
-.bb-card-face {
-  transition: opacity 0.3s ease;
-}
-.bb-card-face-back {
-  opacity: 1;
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-.bb-card-face-front {
-  opacity: 0;
-  position: absolute; 
-  inset: 0;
-  z-index: 1;
-  transform: none !important;
-}
-.bb-card-flipped .bb-card-face-back {
-  opacity: 0;
-  z-index: 1;
-}
-.bb-card-flipped .bb-card-face-front {
-  opacity: 1;
-  z-index: 2;
-}
 
-/* Anti-cheat: front face content invisible when face-down */
-.bb-card-face-front {
-  background: #8B1E2C !important;
-}
-.bb-card-face-front > * {
-  opacity: 0;
-  transition: opacity 0.1s;
-}
-
-/* Anti-cheat: front face images invisible until card is flipped */
+/* Anti-cheat: hide front face content until card is flipped */
 .bb-card-inner:not(.is-up) .bb-card-face-front {
   visibility: hidden;
 }
