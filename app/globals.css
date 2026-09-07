@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Palette ──────────────────────────────────── */
+  --color-paper: #F1EAD8;
+  --color-milk: #FAF5E8;
+  --color-ink: #1B0F08;
+  --color-ink-soft: #5C4A3E;
+  --color-claret: #8B1E2C;
+  --color-claret-dark: #6B1521;
+  --color-turmeric: #D4A017;
+  --color-jade: #2D5F4E;
+  --color-rose: #E8B4B8;
+  --color-cocoa: #3B2117;
+
+  /* ── Type ─────────────────────────────────────── */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-accent: var(--font-caveat), ui-rounded, cursive;
+
+  /* ── Elevation — soft and warm, never harsh ───── */
+  --shadow-card: 0 4px 20px rgba(59, 33, 23, 0.08);
+  --shadow-card-lift: 0 14px 40px rgba(59, 33, 23, 0.14);
+  --shadow-drawer: -12px 0 48px rgba(59, 33, 23, 0.16);
+
+  /* ── Motion ───────────────────────────────────── */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* NOTE: deliberately no `scroll-behavior: smooth`.
+   Next.js 16 no longer overrides it during navigation, and it fights
+   GSAP ScrollTrigger's scrub on the hero — the video would lag the
+   scroll position and never settle. Keep native scrolling. */
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+::selection {
+  background: var(--color-claret);
+  color: var(--color-milk);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-claret);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Product videos are decorative, silent, and always looping — Safari still
+   paints a start-playback button over any video it has not started yet.
+   Nothing here is ever meant to be pressed, so remove the chrome entirely. */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+@utility serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.03em;
+  font-feature-settings: 'liga', 'dlig';
+}
+
+@utility accent {
+  font-family: var(--font-accent);
+  letter-spacing: 0;
+}
+
+/* Page shell — spec: max-w-[1400px] mx-auto px-6 md:px-12 */
+@utility container-bb {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @media (width >= 48rem) {
+    padding-inline: 3rem;
+  }
+}
+
+/* Section rhythm — spec: py-24 md:py-32 */
+@utility section-bb {
+  padding-block: 6rem;
+  @media (width >= 48rem) {
+    padding-block: 8rem;
+  }
+}
+
+/* Hide scrollbars on horizontal filter/carousel rails without losing scroll. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Marquee track — the duplicated half means -50% is a seamless loop point. */
+@keyframes bb-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Announcement bar message rotation. */
+@keyframes bb-rotate-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Memory Match — 3D card flip ─────────────────
+   Written by hand rather than with utility classes: the three properties
+   below (perspective on the scene, preserve-3d on the rotating element,
+   backface-visibility on each face) only work as a set, and keeping them
+   together makes that dependency obvious. */
+.bb-card-scene {
+  perspective: 1000px;
+}
+
+/* No transition and no flipped rule here on purpose — Framer Motion writes
+   the rotateY inline, and a CSS transition on the same property would fight
+   the spring and double-animate every flip. */
+.bb-card-inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.bb-card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* The front is pre-rotated so it faces the viewer once the parent flips. */
+.bb-card-face-front {
+  transform: rotateY(180deg);
+}
+
+/* Ambient crumbs drifting up through the game arena. Deliberately CSS
+   rather than Framer — a dozen always-running springs would keep the main
+   thread busy for pure decoration. */
+@keyframes bb-crumb-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  20%,
+  75% {
+    opacity: var(--bb-crumb-opacity, 0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--bb-crumb-drift, 8px), -120px, 0);
+  }
+}
+
+/* Celebration confetti — a handful of spans, no dependency. Each piece
+   reads its drift, spin, and delay from inline custom properties. */
+@keyframes bb-confetti {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(var(--bb-drift), 60vh, 0) rotate(var(--bb-spin));
+  }
 }
