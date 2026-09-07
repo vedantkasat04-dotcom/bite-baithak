@@ -160,13 +160,13 @@ export default function CheckoutClient() {
 
           <div className="space-y-4">
             {[
-              { name: 'name', label: 'Full Name', type: 'text', placeholder: 'Vedant Kasat' },
-              { name: 'email', label: 'Email', type: 'email', placeholder: 'you@example.com' },
-              { name: 'phone', label: 'Phone', type: 'tel', placeholder: '+91 98765 43210' },
-              { name: 'address', label: 'Address', type: 'text', placeholder: 'Flat / Street / Area' },
-              { name: 'city', label: 'City', type: 'text', placeholder: 'Bangalore' },
-              { name: 'state', label: 'State', type: 'text', placeholder: 'Karnataka' },
-              { name: 'pincode', label: 'Pincode', type: 'text', placeholder: '560001' },
+              { name: 'name', label: 'Full Name', type: 'text', placeholder: '' },
+              { name: 'email', label: 'Email', type: 'email', placeholder: '' },
+              { name: 'phone', label: 'Phone', type: 'tel', placeholder: '' },
+              { name: 'address', label: 'Address', type: 'text', placeholder: '' },
+              { name: 'city', label: 'City', type: 'text', placeholder: '' },
+              { name: 'state', label: 'State', type: 'text', placeholder: '' },
+              { name: 'pincode', label: 'Pincode', type: 'text', placeholder: '' },
             ].map(field => (
               <div key={field.name}>
                 <label className="block text-xs tracking-widest text-ink-soft mb-1 uppercase">{field.label}</label>

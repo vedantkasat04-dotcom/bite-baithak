@@ -33,7 +33,7 @@ export default function ProductCard({
     e.preventDefault()
     e.stopPropagation()
     addItem(product)
-    openDrawer()
+    
     toast.success('Added to cart', {
       description: `${product.name} · ${product.weight}`,
     })

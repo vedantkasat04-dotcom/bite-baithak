@@ -13,6 +13,7 @@ export async function POST(req: Request) {
       amount: amount * 100, // paise
       currency,
       receipt,
+      payment_capture: 1,
     })
     return NextResponse.json(order)
   } catch (err) {
