@@ -270,6 +270,9 @@ export default function MemoryGame() {
    *  twice, once in the grid and once mid-arc. */
   const [flying, setFlying] = useState<number[]>([])
   const [moves, setMoves] = useState(0)
+  const [couponCode, setCouponCode] = useState<string | null>(null)
+  const [couponLoading, setCouponLoading] = useState(false)
+  const [alreadyClaimed, setAlreadyClaimed] = useState(false)
   const [bestScore, setBestScore] = useState<number | null>(null)
   const [locked, setLocked] = useState(false)
   const [basketPop, setBasketPop] = useState(0)
@@ -667,16 +670,33 @@ export default function MemoryGame() {
 
                     <div className="relative px-6 text-center">
                       <p className="serif text-2xl leading-tight text-ink md:text-4xl">
-                        Not bad. Not bad at all.
+                        {moves <= 9 ? "You cracked it! 🎉" : "Not bad — but not fast enough."}
                       </p>
                       <p className="mt-2 text-sm text-ink-soft">
-                        You matched all six in {moves} moves.
+                        You matched all six in {moves} moves. {moves <= 9 ? "Claim your reward below." : "Complete in 9 moves or fewer to unlock a discount."}
                       </p>
-                      <div className="mt-4 rounded-xl border border-turmeric/40 bg-turmeric/10 px-5 py-3">
-                        <p className="text-xs text-ink-soft mb-1">Your reward — use at checkout</p>
-                        <p className="serif text-xl text-ink font-medium tracking-wider">BAITHAK5</p>
-                        <p className="text-xs text-ink-soft mt-1">5% off on orders above ₹799</p>
-                      </div>
+                      {moves <= 9 && (
+                        <div className="mt-4 rounded-xl border border-turmeric/40 bg-turmeric/10 px-5 py-3">
+                          {couponCode ? (
+                            <>
+                              <p className="text-xs text-ink-soft mb-1">{alreadyClaimed ? "Previously claimed — still valid!" : "Your one-time reward:"}</p>
+                              <p className="serif text-2xl text-ink font-medium tracking-widest">{couponCode}</p>
+                              <p className="text-xs text-ink-soft mt-1">10% off on orders above ₹799 · One-time use only</p>
+                            </>
+                          ) : (
+                            <button
+                              onClick={claimCoupon}
+                              disabled={couponLoading}
+                              className="w-full rounded-lg bg-turmeric px-4 py-2 text-sm font-medium text-ink hover:bg-turmeric/80 disabled:opacity-50 transition-colors"
+                            >
+                              {couponLoading ? "Generating..." : "🎁 Claim 10% off"}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      {moves > 9 && (
+                        <p className="mt-3 text-xs text-ink-soft">Next time — solve in 9 moves to unlock a discount.</p>
+                      )}
                       <motion.button
                         type="button"
                         onClick={reshuffle}
