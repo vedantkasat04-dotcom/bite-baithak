@@ -691,12 +691,12 @@ export default function MemoryGame() {
 
                     <div className="relative px-6 text-center">
                       <p className="serif text-2xl leading-tight text-ink md:text-4xl">
-                        {moves <= 9 ? "You cracked it! 🎉" : "Not bad — but not fast enough."}
+                        {moves <= 8 ? "You cracked it! 🎉" : "Not bad — but not fast enough."}
                       </p>
                       <p className="mt-2 text-sm text-ink-soft">
-                        You matched all six in {moves} moves. {moves <= 9 ? "Claim your reward below." : "Complete in 9 moves or fewer to unlock a discount."}
+                        You matched all six in {moves} moves. {moves <= 8 ? "Claim your reward below." : "Complete in 8 moves or fewer to unlock a discount."}
                       </p>
-                      {moves <= 9 && (
+                      {moves <= 8 && (
                         <div className="mt-4 rounded-xl border border-turmeric/40 bg-turmeric/10 px-5 py-3">
                           {couponCode ? (
                             <>
@@ -715,7 +715,7 @@ export default function MemoryGame() {
                           )}
                         </div>
                       )}
-                      {moves > 9 && (
+                      {moves > 8 && (
                         <p className="mt-3 text-xs text-ink-soft">Next time — solve in 9 moves to unlock a discount.</p>
                       )}
                       <motion.button
