@@ -28,7 +28,7 @@ export default async function HomePage() {
       <GiftingTeaser />
       <ProductGridPreview products={products} />
       <Testimonials />
-      <InstagramGrid />
+
     </>
   )
 }
