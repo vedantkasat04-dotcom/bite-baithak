@@ -5,6 +5,7 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
 import Loader from './components/Loader'
+import CookieCursor from './components/CookieCursor'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({
     >
       <body className="antialiased bg-paper text-ink">
         <Loader />
+        <CookieCursor />
         <Nav />
         <main>{children}</main>
         <Footer />
