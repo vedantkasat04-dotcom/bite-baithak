@@ -140,6 +140,7 @@ video::-webkit-media-controls-start-playback-button {
    backface-visibility on each face) only work as a set, and keeping them
    together makes that dependency obvious. */
 .bb-card-scene {
+  isolation: isolate;
   perspective: 1000px;
 }
 
@@ -152,6 +153,7 @@ video::-webkit-media-controls-start-playback-button {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .bb-card-face {

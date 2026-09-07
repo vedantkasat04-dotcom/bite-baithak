@@ -672,6 +672,11 @@ export default function MemoryGame() {
                       <p className="mt-2 text-sm text-ink-soft">
                         You matched all six in {moves} moves.
                       </p>
+                      <div className="mt-4 rounded-xl border border-turmeric/40 bg-turmeric/10 px-5 py-3">
+                        <p className="text-xs text-ink-soft mb-1">Your reward — use at checkout</p>
+                        <p className="serif text-xl text-ink font-medium tracking-wider">BAITHAK5</p>
+                        <p className="text-xs text-ink-soft mt-1">5% off on orders above ₹799</p>
+                      </div>
                       <motion.button
                         type="button"
                         onClick={reshuffle}
