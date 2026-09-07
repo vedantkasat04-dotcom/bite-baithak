@@ -27,28 +27,37 @@ export default function ProductVideo({
   rings,
 }: Props) {
   const src = productVideo(slug)
+  const wrapRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [playing, setPlaying] = useState(false)
-  const [failed, setFailed] = useState(false)
   const [canPlay, setCanPlay] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = true
   })
 
-  function handlePlay(e: React.MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!src || failed) return
-    setPlaying(true)
-    setTimeout(() => {
-      videoRef.current?.play().catch(() => {})
-    }, 50)
-  }
+  useEffect(() => {
+    const video = videoRef.current
+    const wrap = wrapRef.current
+    if (!video || !wrap || !src || failed) return
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {})
+        } else {
+          video.pause()
+          video.currentTime = 0
+        }
+      },
+      { threshold: 0.4 }
+    )
+    io.observe(wrap)
+    return () => io.disconnect()
+  }, [src, failed, canPlay])
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {/* Gradient tile — always underneath */}
+    <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
       <ProductTile
         name={name}
         heroColor={heroColor}
@@ -59,7 +68,6 @@ export default function ProductVideo({
         className="absolute inset-0 z-0 h-full w-full"
       />
 
-      {/* Video — hidden until play is clicked */}
       {src && !failed && (
         <video
           ref={videoRef}
@@ -70,48 +78,10 @@ export default function ProductVideo({
           preload="metadata"
           onCanPlay={() => setCanPlay(true)}
           onError={() => setFailed(true)}
-          className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-500 ${
-            playing && canPlay ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-700 ${
+            canPlay ? 'opacity-100' : 'opacity-0'
           }`}
         />
-      )}
-
-      {/* Play button — shows only when not playing */}
-      {src && !failed && !playing && (
-        <button
-          onClick={handlePlay}
-          aria-label={`Play ${name} video`}
-          className="absolute inset-0 z-20 flex items-center justify-center group"
-        >
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/20 group-hover:bg-black/60 group-hover:scale-110 transition-all duration-200">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="white"
-              className="w-6 h-6 ml-1"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </span>
-        </button>
-      )}
-
-      {/* Pause button — shows when playing */}
-      {playing && (
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            videoRef.current?.pause()
-            setPlaying(false)
-          }}
-          aria-label="Pause video"
-          className="absolute bottom-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/20 hover:bg-black/70 transition-all"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-          </svg>
-        </button>
       )}
     </div>
   )
