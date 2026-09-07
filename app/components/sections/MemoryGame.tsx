@@ -483,6 +483,27 @@ export default function MemoryGame() {
     }),
   }
 
+  function generateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    const seg = (n: number) => Array.from({length: n}, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+    return `BB-${seg(4)}-${seg(4)}`
+  }
+
+  async function claimCoupon() {
+    const claimed = localStorage.getItem('bb_coupon_claimed')
+    if (claimed) { setAlreadyClaimed(true); setCouponCode(claimed); return }
+    setCouponLoading(true)
+    const code = generateCode()
+    try {
+      const { createClient } = await import('@supabase/supabase-js')
+      const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+      await sb.from('coupons').insert({ code, discount_pct: 10, min_order: 799 })
+      localStorage.setItem('bb_coupon_claimed', code)
+      setCouponCode(code)
+    } catch { setCouponCode(code) }
+    setCouponLoading(false)
+  }
+
   return (
     <section className="border-t border-ink/10 py-16 md:py-20">
       <div className="container-bb">
