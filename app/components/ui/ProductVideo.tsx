@@ -9,9 +9,6 @@ type Props = {
   name: string
   heroColor: string
   imageUrl?: string | null
-  /** 'auto' plays immediately (few cards on screen, e.g. the home
-   *  bestsellers). 'inview' only plays while visible, so a long shop grid
-   *  never decodes a dozen videos at once. */
   playback?: 'auto' | 'inview'
   className?: string
   sizes?: string
@@ -19,152 +16,116 @@ type Props = {
   rings?: boolean
 }
 
-const DEBUG = process.env.NODE_ENV !== 'production'
-
 export default function ProductVideo({
   slug,
   name,
   heroColor,
   imageUrl,
-  playback = 'auto',
   className = '',
   sizes,
   priority,
   rings,
 }: Props) {
   const src = productVideo(slug)
-  const wrapRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-
+  const [playing, setPlaying] = useState(false)
   const [failed, setFailed] = useState(false)
-  const [canPlay, setCanPlay] = useState(false)
-  // Looping video is motion; honour the OS preference and stay on the tile.
-  const [reducedMotion, setReducedMotion] = useState(false)
 
-  // Dev-only: report the resolved path for every card, once per mount.
-  useEffect(() => {
-    if (!DEBUG) return
-    if (src) {
-      console.log(`[ProductVideo] "${slug}" → ${src}`)
-    } else {
-      console.log(
-        `[ProductVideo] "${slug}" → no video mapped (gradient fallback). ` +
-          `Add an entry in app/lib/product-media.ts to attach one.`
-      )
-    }
-  }, [slug, src])
-
-  // React does not reliably reflect `muted` as a DOM attribute through
-  // hydration, and an unmuted video is blocked from autoplaying. Set the
-  // property directly so playback cannot silently fail.
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = true
   })
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const apply = () => setReducedMotion(mq.matches)
-    apply()
-    mq.addEventListener('change', apply)
-    return () => mq.removeEventListener('change', apply)
-  }, [])
+  function handlePlay(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!src) return
+    setPlaying(true)
+    setTimeout(() => {
+      videoRef.current?.play()
+    }, 50)
+  }
 
-  const active = Boolean(src) && !failed && !reducedMotion
-
-  // Play/pause with visibility on the shop grid.
-  useEffect(() => {
-    const video = videoRef.current
-    const wrap = wrapRef.current
-    if (!active || !video || !wrap) return
-
-    // A refused autoplay is not an error state — there is deliberately no
-    // control to fall back to, so swallow it and let the effect re-run on
-    // `canPlay` to try again once the browser has enough data.
-    const play = async () => {
-      try {
-        await video.play()
-      } catch {
-        // Silent. The gradient tile underneath is a complete fallback.
-      }
-    }
-
-    if (playback === 'auto') {
-      play()
-      return
-    }
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) play()
-        else video.pause()
-      },
-      { rootMargin: '200px', threshold: 0.1 }
-    )
-    io.observe(wrap)
-    return () => io.disconnect()
-  }, [active, playback, canPlay])
-
-  function handleError() {
-    const el = videoRef.current
-    const code = el?.error?.code
-    const reason =
-      code === 1 ? 'aborted'
-      : code === 2 ? 'network error'
-      : code === 3 ? 'decode error'
-      : code === 4 ? 'not found or unsupported format (404?)'
-      : 'unknown'
-
-    console.error(
-      `[ProductVideo] "${slug}" failed to load ${src} — ${reason}. ` +
-        `Falling back to the gradient tile.`
-    )
-    setFailed(true)
+  function handleClose(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    videoRef.current?.pause()
+    setPlaying(false)
   }
 
   return (
-    <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
-      {/* z-0 — the gradient sits underneath. It is both the fallback and
-          the cover for the video's first paint, so there is no flash. */}
-      <ProductTile
-        name={name}
-        heroColor={heroColor}
-        imageUrl={imageUrl}
-        sizes={sizes}
-        priority={priority}
-        rings={rings}
-        className="absolute inset-0 z-0 h-full w-full"
-      />
-
-      {/* z-10 — video layers above the gradient. */}
-      {active && (
-        <video
-          ref={videoRef}
-          src={src}
-          // 'inview' grids stay opt-in so a long shop page does not decode a
-          // dozen videos at once; the observer above plays them instead. Either
-          // way playback never needs a user gesture.
-          autoPlay={playback === 'auto'}
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          controls={false}
-          disablePictureInPicture
-          disableRemotePlayback
-          aria-hidden
-          tabIndex={-1}
-          onCanPlay={() => {
-            if (DEBUG) console.log(`[ProductVideo] "${slug}" playing ${src}`)
-            setCanPlay(true)
-          }}
-          onError={handleError}
-          // pointer-events-none — the card is a link to the product, and the
-          // video must never become a click-to-play target in front of it.
-          className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-500 ${
-            canPlay ? 'opacity-100' : 'opacity-0'
-          }`}
+    <>
+      {/* Card thumbnail */}
+      <div className={`relative overflow-hidden ${className}`}>
+        <ProductTile
+          name={name}
+          heroColor={heroColor}
+          imageUrl={imageUrl}
+          sizes={sizes}
+          priority={priority}
+          rings={rings}
+          className="absolute inset-0 z-0 h-full w-full"
         />
+
+        {/* Play button overlay — only if video exists */}
+        {src && !failed && (
+          <button
+            onClick={handlePlay}
+            aria-label={`Play ${name} video`}
+            className="absolute inset-0 z-10 flex items-center justify-center group"
+          >
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/20 group-hover:bg-black/60 transition-all duration-200">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="white"
+                className="w-6 h-6 ml-1"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* Fullscreen modal — renders when playing */}
+      {playing && src && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={handleClose}
+        >
+          <div
+            className="relative w-full max-w-3xl mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="absolute -top-12 right-0 text-white/70 hover:text-white text-sm flex items-center gap-2 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M18.364 5.636a1 1 0 010 1.414L13.414 12l4.95 4.95a1 1 0 01-1.414 1.414L12 13.414l-4.95 4.95a1 1 0 01-1.414-1.414L10.586 12 5.636 7.05a1 1 0 011.414-1.414L12 10.586l4.95-4.95a1 1 0 011.414 0z"/>
+              </svg>
+              Close
+            </button>
+
+            {/* Video */}
+            <video
+              ref={videoRef}
+              src={src}
+              controls
+              playsInline
+              muted={false}
+              onError={() => setFailed(true)}
+              className="w-full rounded-xl shadow-2xl"
+            />
+
+            {/* Product name below */}
+            <p className="text-white/70 text-center mt-4 text-sm tracking-wide">
+              {name}
+            </p>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   )
 }
