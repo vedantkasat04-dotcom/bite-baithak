@@ -574,7 +574,7 @@ export default function MemoryGame() {
                               }`}
                             >
                               <motion.div
-                                className="bb-card-inner"
+                                className={`bb-card-inner${isUp ? " is-up" : ""}`}
                                 animate={{
                                   rotateY: isUp ? 180 : 0,
                                   scale: reduced ? 1 : [1, 1.05, 1],
