@@ -197,27 +197,21 @@ export default function Hero() {
             wordmark reveal at the end of the video. */}
         <div className="container-bb absolute inset-x-0 bottom-0 pb-14 md:pb-20">
           <div className="max-w-[52rem]">
-            <p
-              ref={captionRef}
-              className="text-xs tracking-[0.22em] text-milk/70 uppercase opacity-0"
-            >
-              Bangalore · Baked fresh
-            </p>
+
 
             <h1
               ref={headlineRef}
-              className="serif mt-5 text-5xl leading-[0.92] text-milk opacity-0 sm:text-6xl md:text-8xl lg:text-9xl"
+              className="serif mt-5 text-4xl leading-[1.1] text-milk/80 opacity-0 sm:text-5xl md:text-6xl"
             >
-              Every bite deserves
+              Every bite
               <br />
-              <span className="italic">a baithak.</span>
+              <span className="italic">deserves a baithak.</span>
             </h1>
 
             <p
               ref={subRef}
               className="mt-6 max-w-[44ch] text-base leading-relaxed text-milk/80 opacity-0 md:text-lg"
             >
-              20 flavours. Pure desi ghee. Zero shortcuts.
             </p>
 
             <div
