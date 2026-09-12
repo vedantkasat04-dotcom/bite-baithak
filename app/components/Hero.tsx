@@ -103,7 +103,7 @@ export default function Hero() {
 
           // Overlay copy enters at the progress points from the brief.
           tl.fromTo(
-            [captionRef.current, headlineRef.current],
+            [headlineRef.current],
             { opacity: 0, y: 34 },
             { opacity: 1, y: 0, duration: 0.12, stagger: 0.03, ease: 'power2.out' },
             0
@@ -142,7 +142,7 @@ export default function Hero() {
           video.play().catch(() => {})
 
           gsap.set(
-            [captionRef.current, headlineRef.current, subRef.current, ctaRef.current],
+            [headlineRef.current, subRef.current, ctaRef.current],
             { opacity: 1, y: 0 }
           )
         }
