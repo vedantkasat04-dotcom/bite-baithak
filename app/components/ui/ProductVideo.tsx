@@ -20,32 +20,24 @@ export default function ProductVideo({ slug, name, heroColor, imageUrl, classNam
   const src = productVideo(slug)
   const wrapRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const video = videoRef.current
-    const wrap = wrapRef.current
-    if (!video || !wrap || !src) return
-
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: '400px', threshold: 0 }
-    )
-    io.observe(wrap)
-    return () => io.disconnect()
-  }, [src])
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video || !src) return
     video.muted = true
-    if (visible) {
+    video.load()
+    const tryPlay = () => {
+      video.muted = true
       video.play().catch(() => {})
-    } else {
-      video.pause()
-      video.currentTime = 0
     }
-  }, [visible, src])
+    video.addEventListener('loadeddata', tryPlay)
+    document.addEventListener('click', tryPlay, { once: true })
+    document.addEventListener('touchstart', tryPlay, { once: true })
+    return () => {
+      video.removeEventListener('loadeddata', tryPlay)
+    }
+  }, [src])
 
   if (!src) {
     return (
@@ -65,7 +57,9 @@ export default function ProductVideo({ slug, name, heroColor, imageUrl, classNam
         muted
         playsInline
         preload="auto"
-        className="absolute inset-0 z-10 h-full w-full object-cover"
+        autoPlay
+        onLoadedData={() => setReady(true)}
+        className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
     </div>
   )
