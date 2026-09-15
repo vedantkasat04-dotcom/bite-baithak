@@ -11,7 +11,7 @@ const InstagramGrid = dynamic(() => import('./components/home/InstagramGrid'))
 
 /** Product data changes without a redeploy, so the home page refreshes
  *  on the same cadence as the shop. */
-export const revalidate = 300
+export const revalidate = 60
 
 export default async function HomePage() {
   const [bestsellers, products] = await Promise.all([
