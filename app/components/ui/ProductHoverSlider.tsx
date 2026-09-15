@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 type Props = {
@@ -20,8 +20,9 @@ export default function ProductHoverSlider({
 }: Props) {
   const [active, setActive] = useState(0)
   const [hovering, setHovering] = useState(false)
+  const wrapRef = useRef<HTMLDivElement>(null)
 
-  // Cycle through images while hovering
+  // Cycle while hovering
   useEffect(() => {
     if (!hovering || images.length < 2) return
     const id = setInterval(() => {
@@ -30,17 +31,31 @@ export default function ProductHoverSlider({
     return () => clearInterval(id)
   }, [hovering, images.length])
 
-  // Reset to first image when hover ends
+  // Reset on hover end
   useEffect(() => {
     if (!hovering) setActive(0)
   }, [hovering])
 
+  // Safari-friendly: use pointer events on the ref instead of React synthetic events
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const enter = () => setHovering(true)
+    const leave = () => setHovering(false)
+    el.addEventListener('pointerenter', enter)
+    el.addEventListener('pointerleave', leave)
+    el.addEventListener('mouseenter', enter)
+    el.addEventListener('mouseleave', leave)
+    return () => {
+      el.removeEventListener('pointerenter', enter)
+      el.removeEventListener('pointerleave', leave)
+      el.removeEventListener('mouseenter', enter)
+      el.removeEventListener('mouseleave', leave)
+    }
+  }, [])
+
   return (
-    <div
-      className={`relative overflow-hidden ${className}`}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
+    <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
       {images.map((src, i) => (
         <Image
           key={src}
@@ -55,7 +70,6 @@ export default function ProductHoverSlider({
         />
       ))}
 
-      {/* Dot indicators */}
       {images.length > 1 && (
         <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
           {images.map((_, i) => (
