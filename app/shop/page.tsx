@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 /** Prices and stock change without a redeploy, so the shop revalidates
  *  rather than being frozen at build time. */
-export const revalidate = 300
+export const revalidate = 60
 
 export default async function ShopPage({
   searchParams,
