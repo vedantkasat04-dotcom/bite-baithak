@@ -9,6 +9,7 @@ import { formatPrice } from '../lib/supabase'
 import { useCart } from '../lib/store'
 import { productDescription } from '../lib/product-copy'
 import ProductVideo from './ui/ProductVideo'
+import ProductHoverSlider from './ui/ProductHoverSlider'
 
 type Props = {
   product: Product
@@ -29,11 +30,13 @@ export default function ProductCard({
   const openDrawer = useCart((s) => s.openDrawer)
   const description = showDescription ? productDescription(product) : undefined
 
+  const photos = product.gallery_urls ?? []
+
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     addItem(product)
-    
+
     toast.success('Added to cart', {
       description: `${product.name} · ${product.weight}`,
     })
@@ -51,17 +54,25 @@ export default function ProductCard({
       }}
       className="group rounded-2xl bg-milk shadow-[var(--shadow-card)] transition-shadow duration-500 hover:shadow-[var(--shadow-card-lift)]"
     >
-      {/* ── Video area — NOT a link, just plays inline ── */}
       <div className="relative">
-        <ProductVideo
-          slug={product.slug}
-          name={product.name}
-          heroColor={product.hero_color}
-          imageUrl={product.image_url}
-          priority={priority}
-          playback={videoPlayback}
-          className="aspect-[4/5] rounded-t-2xl"
-        />
+        {photos.length >= 2 ? (
+          <ProductHoverSlider
+            images={photos}
+            name={product.name}
+            priority={priority}
+            className="aspect-[4/5] rounded-t-2xl"
+          />
+        ) : (
+          <ProductVideo
+            slug={product.slug}
+            name={product.name}
+            heroColor={product.hero_color}
+            imageUrl={product.image_url}
+            priority={priority}
+            playback={videoPlayback}
+            className="aspect-[4/5] rounded-t-2xl"
+          />
+        )}
 
         {product.is_bestseller && (
           <span className="accent absolute left-4 top-4 z-20 rounded-full bg-turmeric px-3 py-1 text-sm text-ink">
@@ -88,7 +99,6 @@ export default function ProductCard({
         </div>
       </div>
 
-      {/* ── Info area — IS a link to product page ── */}
       <Link href={`/product/${product.slug}`} className="block p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
