@@ -24,6 +24,7 @@ export default function Bestsellers({ products }: { products: Product[] }) {
               priority={i < 2}
               showDescription
               forceVideo
+              forceVideo
             />
           ))}
         </div>
