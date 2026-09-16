@@ -18,6 +18,7 @@ type Props = {
   index?: number
   videoPlayback?: 'auto' | 'inview'
   showDescription?: boolean
+  forceVideo?: boolean
 }
 
 export default function ProductCard({
@@ -26,6 +27,7 @@ export default function ProductCard({
   index = 0,
   videoPlayback = 'auto',
   showDescription = false,
+  forceVideo = false,
 }: Props) {
   const addItem = useCart((s) => s.addItem)
   const updateQuantity = useCart((s) => s.updateQuantity)
@@ -48,12 +50,11 @@ export default function ProductCard({
 
   function handleQtyChange(next: number) {
     if (!cartItem) return
-    if (next < 1) {
-      removeItem(cartItem.key)
-    } else {
-      updateQuantity(cartItem.key, next)
-    }
+    if (next < 1) removeItem(cartItem.key)
+    else updateQuantity(cartItem.key, next)
   }
+
+  const showSlider = !forceVideo && photos.length >= 2
 
   return (
     <motion.article
@@ -68,7 +69,7 @@ export default function ProductCard({
       className="group rounded-2xl bg-milk shadow-[var(--shadow-card)] transition-shadow duration-500 hover:shadow-[var(--shadow-card-lift)]"
     >
       <div className="relative">
-        {photos.length >= 2 ? (
+        {showSlider ? (
           <ProductHoverSlider
             images={photos}
             name={product.name}

@@ -17,11 +17,13 @@ export default function Bestsellers({ products }: { products: Product[] }) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product, i) => (
             <ProductCard
+              forceVideo
               key={product.id}
               product={product}
               index={i}
               priority={i < 2}
               showDescription
+              forceVideo
             />
           ))}
         </div>
