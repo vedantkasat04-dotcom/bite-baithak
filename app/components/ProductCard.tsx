@@ -10,6 +10,7 @@ import { useCart } from '../lib/store'
 import { productDescription } from '../lib/product-copy'
 import ProductVideo from './ui/ProductVideo'
 import ProductHoverSlider from './ui/ProductHoverSlider'
+import QuantityStepper from './ui/QuantityStepper'
 
 type Props = {
   product: Product
@@ -27,19 +28,32 @@ export default function ProductCard({
   showDescription = false,
 }: Props) {
   const addItem = useCart((s) => s.addItem)
-  const openDrawer = useCart((s) => s.openDrawer)
+  const updateQuantity = useCart((s) => s.updateQuantity)
+  const items = useCart((s) => s.items)
   const description = showDescription ? productDescription(product) : undefined
 
+  const cartItem = items.find((i) => i.slug === product.slug)
+  const quantity = cartItem?.quantity ?? 0
   const photos = product.gallery_urls ?? []
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     addItem(product)
-
     toast.success('Added to cart', {
       description: `${product.name} · ${product.weight}`,
     })
+  }
+
+  function handleQtyChange(e: React.MouseEvent, next: number) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!cartItem) return
+    if (next < 1) {
+      updateQuantity(cartItem.key, 0)
+    } else {
+      updateQuantity(cartItem.key, next)
+    }
   }
 
   return (
@@ -86,16 +100,30 @@ export default function ProductCard({
           </span>
         )}
 
+        {/* ── Bottom CTA — Add to cart OR quantity stepper ── */}
         <div className="absolute inset-x-3 bottom-3 z-20 translate-y-2 opacity-0 transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100">
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={!product.in_stock}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-claret px-5 py-3 text-sm font-medium text-milk transition-colors hover:bg-claret-dark disabled:opacity-40"
-          >
-            <ShoppingBag size={15} strokeWidth={2} />
-            {product.in_stock ? 'Add to cart' : 'Sold out'}
-          </button>
+          {quantity > 0 ? (
+            <div className="flex items-center justify-center rounded-full bg-milk px-2 py-1.5 shadow-md">
+              <QuantityStepper
+                size="sm"
+                value={quantity}
+                onChange={(next) => {
+                  if (!cartItem) return
+                  updateQuantity(cartItem.key, next < 1 ? 0 : next)
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={!product.in_stock}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-claret px-5 py-3 text-sm font-medium text-milk transition-colors hover:bg-claret-dark disabled:opacity-40"
+            >
+              <ShoppingBag size={15} strokeWidth={2} />
+              {product.in_stock ? 'Add to cart' : 'Sold out'}
+            </button>
+          )}
         </div>
       </div>
 
