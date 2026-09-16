@@ -27,7 +27,7 @@ export default function ProductHoverSlider({
     if (!hovering || images.length < 2) return
     const id = setInterval(() => {
       setActive((i) => (i + 1) % images.length)
-    }, 2000)
+    }, 1400)
     return () => clearInterval(id)
   }, [hovering, images.length])
 
