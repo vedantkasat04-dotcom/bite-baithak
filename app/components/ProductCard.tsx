@@ -29,6 +29,7 @@ export default function ProductCard({
 }: Props) {
   const addItem = useCart((s) => s.addItem)
   const updateQuantity = useCart((s) => s.updateQuantity)
+  const removeItem = useCart((s) => s.removeItem)
   const items = useCart((s) => s.items)
   const description = showDescription ? productDescription(product) : undefined
 
@@ -45,12 +46,10 @@ export default function ProductCard({
     })
   }
 
-  function handleQtyChange(e: React.MouseEvent, next: number) {
-    e.preventDefault()
-    e.stopPropagation()
+  function handleQtyChange(next: number) {
     if (!cartItem) return
     if (next < 1) {
-      updateQuantity(cartItem.key, 0)
+      removeItem(cartItem.key)
     } else {
       updateQuantity(cartItem.key, next)
     }
@@ -100,17 +99,14 @@ export default function ProductCard({
           </span>
         )}
 
-        {/* ── Bottom CTA — Add to cart OR quantity stepper ── */}
         <div className="absolute inset-x-3 bottom-3 z-20 translate-y-2 opacity-0 transition-all duration-500 ease-[var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100">
           {quantity > 0 ? (
             <div className="flex items-center justify-center rounded-full bg-milk px-2 py-1.5 shadow-md">
               <QuantityStepper
                 size="sm"
+                min={0}
                 value={quantity}
-                onChange={(next) => {
-                  if (!cartItem) return
-                  updateQuantity(cartItem.key, next < 1 ? 0 : next)
-                }}
+                onChange={handleQtyChange}
               />
             </div>
           ) : (
