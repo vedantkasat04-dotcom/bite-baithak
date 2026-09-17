@@ -46,7 +46,7 @@ export default function CheckoutClient() {
 
   const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
   const discount = appliedCoupon ? Math.round(subtotal * appliedCoupon.discount / 100) : 0
-  const shipping = subtotal >= 1299 ? 0 : 60
+  const shipping = subtotal >= 1499 ? 0 : 179
   const total = subtotal - discount + shipping
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
