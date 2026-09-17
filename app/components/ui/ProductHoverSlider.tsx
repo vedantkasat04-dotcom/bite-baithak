@@ -21,22 +21,31 @@ export default function ProductHoverSlider({
   const [active, setActive] = useState(0)
   const [hovering, setHovering] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const firstChange = useRef(true)
 
-  // Cycle while hovering
   useEffect(() => {
     if (!hovering || images.length < 2) return
-    const id = setInterval(() => {
+    firstChange.current = true
+
+    // First change is fast (300ms), subsequent are normal (1200ms)
+    const tick = () => {
       setActive((i) => (i + 1) % images.length)
-    }, 1200)
-    return () => clearInterval(id)
+      const delay = firstChange.current ? 1200 : 1200
+      firstChange.current = false
+      timer = setTimeout(tick, delay)
+    }
+
+    let timer = setTimeout(tick, 300) // first change after 300ms
+    return () => clearTimeout(timer)
   }, [hovering, images.length])
 
-  // Reset on hover end
   useEffect(() => {
-    if (!hovering) setActive(0)
+    if (!hovering) {
+      setActive(0)
+      firstChange.current = true
+    }
   }, [hovering])
 
-  // Safari-friendly: use pointer events on the ref instead of React synthetic events
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
@@ -64,7 +73,7 @@ export default function ProductHoverSlider({
           fill
           sizes={sizes}
           priority={priority && i === 0}
-          className={`object-cover transition-opacity duration-500 ease-out ${
+          className={`object-cover transition-opacity duration-300 ease-out ${
             i === active ? 'opacity-100' : 'opacity-0'
           }`}
         />
