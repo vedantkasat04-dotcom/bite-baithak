@@ -39,6 +39,8 @@ export default function CheckoutClient() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
   const [couponError, setCouponError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => setHydrated(true), [])
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
     address: '', city: '', state: '', pincode: ''

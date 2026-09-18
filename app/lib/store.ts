@@ -134,8 +134,8 @@ export const selectCount = (items: CartItem[]) =>
   items.reduce((sum, i) => sum + i.quantity, 0)
 
 /** Free shipping at ₹999; below that a flat ₹79. */
-export const FREE_SHIPPING_THRESHOLD = 999
-export const FLAT_SHIPPING = 79
+export const FREE_SHIPPING_THRESHOLD = 1499
+export const FLAT_SHIPPING = 179
 
 export const selectShipping = (subtotal: number) =>
   subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING
