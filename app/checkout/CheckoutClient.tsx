@@ -257,6 +257,11 @@ export default function CheckoutClient() {
 
               {/* Totals */}
               <div className="border-t border-ink/8 px-6 py-5 space-y-3">
+                {subtotal < 1499 && (
+                  <p className="rounded-xl bg-paper px-4 py-3 text-xs text-ink-soft">
+                    Add <span className="font-medium text-claret">₹{1499 - subtotal}</span> more for free shipping!
+                  </p>
+                )}
                 <div className="flex justify-between text-sm text-ink-soft">
                   <span>Subtotal</span><span>₹{subtotal}</span>
                 </div>
