@@ -42,13 +42,7 @@ export async function POST(req: Request) {
       .select()
       .single()
 
-    // Mark coupon as used if applicable
-    if (orderData.coupon_code) {
-      await supabase
-        .from('coupons')
-        .update({ used: true, used_at: new Date().toISOString() })
-        .eq('code', orderData.coupon_code)
-    }
+    // Coupon is reusable — no update needed
 
     // Send confirmation email
     await resend.emails.send({
