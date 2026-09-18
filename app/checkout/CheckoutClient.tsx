@@ -57,7 +57,7 @@ export default function CheckoutClient() {
 
   async function applyCoupon() {
     if (!coupon.trim()) return
-    if (subtotal < 799) { setCouponError('Minimum order ₹799 required'); return }
+    // No minimum order required
     const res = await fetch('/api/verify-coupon', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code: coupon.trim().toUpperCase() })
