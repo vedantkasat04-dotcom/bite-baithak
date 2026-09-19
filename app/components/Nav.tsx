@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Menu, ShoppingBag, X } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState, useRef } from 'react'
+import { Menu, ShoppingBag, X, Search } from 'lucide-react'
 import { useCart, selectCount } from '../lib/store'
 import AnnouncementBar from './AnnouncementBar'
 
@@ -11,21 +11,22 @@ const LINKS = [
   { href: '/shop', label: 'Shop' },
   { href: '/story', label: 'Story' },
   { href: '/gifting', label: 'Gifting' },
-  // The contact form lives at the foot of /gifting — no separate route.
   { href: '/gifting#contact', label: 'Contact' },
 ]
 
 export default function Nav() {
   const pathname = usePathname()
+  const router = useRouter()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<{ name: string; slug: string; price: number; weight: string }[]>([])
+  const searchRef = useRef<HTMLInputElement>(null)
 
   const items = useCart((s) => s.items)
   const hasHydrated = useCart((s) => s.hasHydrated)
   const toggleDrawer = useCart((s) => s.toggleDrawer)
-
-  // Badge stays blank until the persisted cart is read, otherwise the
-  // server-rendered 0 and the client value disagree on first paint.
   const count = hasHydrated ? selectCount(items) : 0
 
   useEffect(() => {
@@ -34,6 +35,38 @@ export default function Nav() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (searchOpen) {
+      setTimeout(() => searchRef.current?.focus(), 100)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+      setQuery('')
+      setResults([])
+    }
+  }, [searchOpen])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSearchOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  useEffect(() => {
+    if (!query.trim()) { setResults([]); return }
+    const timer = setTimeout(async () => {
+      const res = await fetch(
+        `https://tcqfwdngfkywyrlbsxek.supabase.co/rest/v1/products?name=ilike.*${encodeURIComponent(query)}*&select=name,slug,price,weight&order=sort_order`,
+        { headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! } }
+      )
+      const data = await res.json()
+      setResults(Array.isArray(data) ? data : [])
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [query])
 
   return (
     <header className="sticky top-0 z-50">
@@ -58,10 +91,9 @@ export default function Nav() {
           <ul className="hidden items-center gap-9 md:flex">
             {LINKS.map((link) => {
               const base = link.href.split('#')[0]
-              const active =
-                link.href.includes('#')
-                  ? false // anchor links never own the active state
-                  : pathname === base || pathname.startsWith(base + '/')
+              const active = link.href.includes('#')
+                ? false
+                : pathname === base || pathname.startsWith(base + '/')
               return (
                 <li key={link.href}>
                   <Link
@@ -81,6 +113,17 @@ export default function Nav() {
           </ul>
 
           <div className="flex items-center gap-2">
+            {/* Search button */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search products"
+              className="rounded-full p-2.5 text-ink transition-colors hover:bg-ink/[0.06]"
+            >
+              <Search size={19} strokeWidth={1.75} />
+            </button>
+
+            {/* Cart button */}
             <button
               type="button"
               onClick={toggleDrawer}
@@ -125,6 +168,69 @@ export default function Nav() {
           </div>
         )}
       </nav>
+
+      {/* Search overlay */}
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-[80] bg-cocoa/40 backdrop-blur-sm"
+          onClick={() => setSearchOpen(false)}
+        >
+          <div
+            className="mx-auto mt-24 max-w-xl px-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search input */}
+            <div className="flex items-center gap-3 rounded-2xl bg-paper px-5 py-4 shadow-[var(--shadow-card-lift)]">
+              <Search size={18} className="shrink-0 text-ink-soft" strokeWidth={1.75} />
+              <input
+                ref={searchRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search cookies, savouries…"
+                className="flex-1 bg-transparent text-base text-ink placeholder-ink/30 focus:outline-none"
+              />
+              {query && (
+                <button onClick={() => setQuery('')} className="text-ink-soft hover:text-ink">
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Results */}
+            {results.length > 0 && (
+              <div className="mt-2 overflow-hidden rounded-2xl bg-paper shadow-[var(--shadow-card-lift)]">
+                {results.map((product) => (
+                  <Link
+                    key={product.slug}
+                    href={`/product/${product.slug}`}
+                    onClick={() => setSearchOpen(false)}
+                    className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-milk"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-ink">{product.name}</p>
+                      <p className="text-xs text-ink-soft">{product.weight}</p>
+                    </div>
+                    <p className="text-sm font-medium text-ink">₹{product.price}</p>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {query && results.length === 0 && (
+              <div className="mt-2 rounded-2xl bg-paper px-5 py-6 text-center shadow-[var(--shadow-card-lift)]">
+                <p className="text-sm text-ink-soft">No products found for "{query}"</p>
+                <Link
+                  href="/shop"
+                  onClick={() => setSearchOpen(false)}
+                  className="mt-3 inline-block text-sm text-claret hover:underline"
+                >
+                  Browse all products →
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   )
 }
