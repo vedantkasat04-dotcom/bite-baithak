@@ -68,6 +68,7 @@ export default function CheckoutClient() {
       setCouponError('')
     } else {
       setCouponError(data.error || 'Invalid or already used coupon')
+      setAppliedCoupon(null)
     }
   }
 
