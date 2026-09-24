@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 
 const MESSAGES = [
   'Free shipping across India on orders above ₹1499',
-  'Baked in small batches — never mass produced',
-  'Pure desi ghee. Never palm oil.',
-  'Corporate and festive gifting — bulk orders open',
+  'Baked fresh, arrives fast',
+  'No Palm Oil. No Preservatives.',
+  'Corporate and festive gifting also available',
 ]
 
 const INTERVAL_MS = 4200
@@ -16,7 +16,7 @@ export default function AnnouncementBar() {
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) return // Hold on the first message rather than cycling.
+    if (reduced) return
 
     const id = setInterval(
       () => setIndex((i) => (i + 1) % MESSAGES.length),
