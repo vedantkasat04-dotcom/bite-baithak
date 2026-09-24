@@ -5,7 +5,8 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import CartDrawer from './components/CartDrawer'
 import Loader from './components/Loader'
-import CookieCursor from './components/CookieCursor'
+import CookieCursor from "./components/CookieCursor"
+import MetaPixel from "./components/MetaPixel"
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({
       className={`${inter.variable} ${instrument.variable} ${caveat.variable}`}
     >
       <body className="antialiased bg-paper text-ink">
+        <MetaPixel />
         <Loader />
         <CookieCursor />
         <Nav />
