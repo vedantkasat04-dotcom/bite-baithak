@@ -16,6 +16,11 @@ const SLIDES = [
     alt: 'Baker in white gloves arranging fresh double chocolate cookies',
     pos: 'object-center',
   },
+       {
+       src: '/hero/slide-3.png',
+       alt: 'Two generations exchanging Bite Baithak Nankhatai during Diwali',
+       pos: 'object-center',
+     },
 ]
 
 const EYEBROW = 'Small batch. Baked fresh.'
