@@ -7,7 +7,7 @@ export default function Hero() {
     <section className="relative h-[88vh] min-h-[600px] w-full overflow-hidden md:h-screen">
       {/* Background photo */}
       <Image
-        src="/hero/slide-1.jpg"
+        src="/hero/slide-1.png"
         alt="A three-generation family sharing chai and Bite Baithak cookies in a Rajasthani haveli"
         fill
         priority
