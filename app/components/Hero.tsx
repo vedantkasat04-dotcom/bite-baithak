@@ -9,32 +9,20 @@ const SLIDES = [
   {
     src: '/hero/slide-1.png',
     alt: 'Family sharing chai and Bite Baithak cookies in a Rajasthani haveli',
-    eyebrow: 'Small batch. Baked fresh.',
-    h1: 'Every bite',
-    hI: 'deserves',
-    h2: 'a baithak.',
-    sub: 'Handcrafted cookies and savouries — no palm oil, no preservatives, no shortcuts.',
-    cta: 'Shop the collection',
-    ctaHref: '/shop',
-    sec: 'Our story',
-    secHref: '/story',
     pos: 'object-[70%_center] md:object-center',
   },
   {
     src: '/hero/slide-2.png',
     alt: 'Baker in white gloves arranging fresh double chocolate cookies',
-    eyebrow: 'Made by hand. Every batch.',
-    h1: 'Small batches.',
-    hI: 'Never',
-    h2: 'mass produced.',
-    sub: 'Slow-baked in small trays with real ingredients — the way cookies were meant to be made.',
-    cta: 'Meet our bakes',
-    ctaHref: '/shop',
-    sec: 'Our story',
-    secHref: '/story',
     pos: 'object-center',
   },
 ]
+
+const EYEBROW = 'Small batch. Baked fresh.'
+const H1 = 'Every bite'
+const HI = 'deserves'
+const H2 = 'a baithak.'
+const SUB = 'Handcrafted cookies and savouries — no palm oil, no preservatives, no shortcuts.'
 
 export default function Hero() {
   const [i, setI] = useState(0)
@@ -68,8 +56,6 @@ export default function Hero() {
     touchStartX.current = null
   }
 
-  const s = SLIDES[i]
-
   return (
     <section className="relative w-full" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="relative h-[85vh] min-h-[560px] w-full overflow-hidden md:h-[92vh] md:min-h-[640px]">
@@ -82,18 +68,18 @@ export default function Hero() {
 
         <div className="container-bb absolute inset-0 z-10 flex items-end pb-14 md:items-center md:pb-0">
           <div className="w-full max-w-xl text-milk">
-            <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-milk/85 md:text-xs md:tracking-[0.32em]">{s.eyebrow}</p>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-milk/85 md:text-xs md:tracking-[0.32em]">{EYEBROW}</p>
             <h1 className="serif text-[42px] leading-[0.95] md:text-6xl lg:text-7xl xl:text-8xl">
-              {s.h1} <br className="hidden md:block" />
-              <span className="italic">{s.hI}</span> {s.h2}
+              {H1} <br className="hidden md:block" />
+              <span className="italic">{HI}</span> {H2}
             </h1>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-milk/90 md:mt-6 md:text-base lg:text-lg">{s.sub}</p>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-milk/90 md:mt-6 md:text-base lg:text-lg">{SUB}</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap md:mt-9">
-              <Link href={s.ctaHref} className="group inline-flex items-center justify-center gap-2 rounded-full bg-milk px-7 py-3.5 text-sm font-medium text-ink transition-all hover:bg-turmeric">
-                {s.cta}<ArrowRight size={16} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" />
+              <Link href="/shop" className="group inline-flex items-center justify-center gap-2 rounded-full bg-milk px-7 py-3.5 text-sm font-medium text-ink transition-all hover:bg-turmeric">
+                Shop the collection<ArrowRight size={16} className="ml-1 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-              <Link href={s.secHref} className="inline-flex items-center justify-center gap-2 rounded-full border border-milk/40 px-7 py-3.5 text-sm font-medium text-milk backdrop-blur-sm transition-all hover:bg-milk/10">
-                {s.sec}
+              <Link href="/story" className="inline-flex items-center justify-center gap-2 rounded-full border border-milk/40 px-7 py-3.5 text-sm font-medium text-milk backdrop-blur-sm transition-all hover:bg-milk/10">
+                Our story
               </Link>
             </div>
           </div>
